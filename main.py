@@ -13,15 +13,15 @@ class VideoModel(db.Model):
 	views = db.Column(db.Integer, nullable=False)
 	likes = db.Column(db.Integer, nullable=False)
 
-video_put_args = reqparse.RequestParser()
-video_put_args.add_argument("name", type=str, help="Name of the video is required", required=True)
-video_put_args.add_argument("views", type=int, help="Views of the video", required=True)
-video_put_args.add_argument("likes", type=int, help="Likes on the video", required=True)
+post_video = reqparse.RequestParser()
+post_video.add_argument("name", type=str, help="Name of the video is required", required=True)
+post_video.add_argument("views", type=int, help="Views of the video", required=True)
+post_video.add_argument("likes", type=int, help="Likes on the video", required=True)
 
-video_update_args = reqparse.RequestParser()
-video_update_args.add_argument("name", type=str, help="Name of the video is required")
-video_update_args.add_argument("views", type=int, help="Views of the video")
-video_update_args.add_argument("likes", type=int, help="Likes on the video")
+update_video = reqparse.RequestParser()
+update_video.add_argument("name", type=str, help="Name of the video is required")
+update_video.add_argument("views", type=int, help="Views of the video")
+update_video.add_argument("likes", type=int, help="Likes on the video")
 
 resource_fields = {
 	'id': fields.Integer,
@@ -40,7 +40,7 @@ class Video(Resource):
 
 	@marshal_with(resource_fields)
 	def post(self, video_id):
-		args = video_put_args.parse_args()
+		args = post_video.parse_args()
 		result = VideoModel.query.filter_by(id=video_id).first()
 		if result:
 			abort(409, message="Video id taken...")
@@ -52,7 +52,7 @@ class Video(Resource):
 
 	@marshal_with(resource_fields)
 	def patch(self, video_id):
-		args = video_update_args.parse_args()
+		args = update_video.parse_args()
 		result = VideoModel.query.filter_by(id=video_id).first()
 		if not result:
 			abort(404, message="Video doesn't exist, cannot update")
